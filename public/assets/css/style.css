@@ -12,3 +12,10 @@
   @keyframes l25 {
     100% {transform: rotate(1turn)}
   }
+
+  body{
+    background-image: url(../image/bg.webp);
+    
+    background-repeat: no-repeat;
+    background-size: cover;
+  }

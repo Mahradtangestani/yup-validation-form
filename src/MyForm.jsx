@@ -1,8 +1,9 @@
 import { ErrorMessage, FastField, Form, Formik } from "formik";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import * as Yup from 'yup'
 import PersonalError from "./components/PersonalError";
 import PersonalLoader from "./components/PersonalLoader";
+import FormikControl from "./components/formikElements/FormikControl";
 
 const MyForm = () => {
   
@@ -36,12 +37,31 @@ const MyForm = () => {
     }),
     phone: Yup.array().of(Yup.string().required("Please enter your number"))
   })
+
+  
+  const handleSaveData = (formik)=>{
+      localStorage.setItem("savedData" , JSON.stringify(formik.values))
+      
+  }
+  
+  const handleGetSaveData = ()=>{
+        setMyValue(savedData)
+  }
+  const [savedData , setSaveData] = useState(null)
+  const [myValue , setMyValue] = useState(null)
+
+  useEffect(()=>{
+      const localSaveData = JSON.parse(localStorage.getItem("savedData"))
+      setSaveData(localSaveData)
+  },[])
+
   return (
     <Formik 
-    initialValues={initialValues}
+    initialValues={myValue || initialValues}
     onSubmit={onSubmit}
     validationSchema={validationSchema}
     validateOnMount
+    enableReinitialize
     >
      {formik=>{
         console.log(formik);
@@ -50,46 +70,54 @@ const MyForm = () => {
                 <div className="d-flex w-100 justify-content-center align-items-center"> 
                    
                      <Form className="row col-11 col-md-8 col-lg-6 col-xl-4 mt-5">
-                          <h3 className="text-center text-success">Validation & Yup</h3>
-                         <div className="mt-4">
-                            <label className="label-control text-center">Name:</label>
-                            <FastField type="text" placeholder="type your name" className="form-control" name='name'/>
-                            <ErrorMessage name="name" component={PersonalError}/>
-                         </div>
-        
-                         <div className="mt-4">
-                            <label className="label-control text-center">Email:</label>
-                            <FastField type="text" placeholder="type your email" className="form-control" name='email'/>
-                            <ErrorMessage name="email" component={PersonalError}/> 
-                         </div>
-        
-                         <div className="mt-4">
-                           <label className="label-control text-center">Password:</label>
-                           <FastField type="text" placeholder="type your password" className="form-control" name='password'/>
-                           <ErrorMessage name="password" component={PersonalError}/>
-                         </div>
+                          <h3 className="text-center text-white">Validation & Yup</h3>
+
+                          <FormikControl 
+                          control="input"
+                          type="text"
+                          name="name"
+                          label="Name:"
+                          placeholder="type your name"
+                          />
+                          
+                          <FormikControl 
+                          control="input"
+                          type="text"
+                          name="email"
+                          label="Email:"
+                          placeholder="type your email"
+                          />
+
+                          <FormikControl 
+                          control="input"
+                          type="text"
+                          name="password"
+                          label="Password:"
+                          placeholder="type your password"
+                          />
+                        
         
                          <div className="col-6 mt-4">
-                            <label className="label-control text-center">City:</label>
+                            <label className="label-control text-center text-white">City:</label>
                             <FastField type="text" placeholder="type your city" className="form-control" name='address.city'/>
                             <ErrorMessage name="address.city" component={PersonalError}/>
                          </div>
         
                          <div className="col-6 mt-4">
-                            <label className="label-control text-center">Postal code:</label>
+                            <label className="label-control text-center text-white">Postal code:</label>
                             <FastField type="text" placeholder="type your postal code" className="form-control" name='address.postalcode'/>
                             <ErrorMessage name="address.postalcode" component={PersonalError}/>
                          </div>
         
                          
                             <div className="col-6 mt-4">
-                               <label className="label-control text-center ">Telephone:</label>
-                               <FastField type="number" placeholder="type your phone numbrer" className="form-control" name='phone[0]'/>
+                               <label className="label-control text-center text-white">Telephone:</label>
+                               <FastField type="number" placeholder="type your phon telePhone" className="form-control" name='phone[0]'/>
                                <ErrorMessage name="phone[0]" component={PersonalError}/>
                             </div>
                             <div className="col-6 mt-4">
-                               <label className="label-control text-center">Mobile:</label>
-                               <FastField type="number" placeholder="type your mobile number" className="form-control" name='phone[1]'/>
+                               <label className="label-control text-center text-white">Mobile:</label>
+                               <FastField type="number" placeholder="type your mobileNumber" className="form-control" name='phone[1]'/>
                                <ErrorMessage name="phone[1]" component={PersonalError}/>
                             </div>
                             <div className="mt-5 text-center">
@@ -102,8 +130,22 @@ const MyForm = () => {
                                         )
                                     }
                                     
-                                    
                                 </button>
+
+                                {
+                                 (formik.isValid && formik.dirty) ? (
+                                    <button type="button" className="btn btn-warning me-2" onClick={()=>handleSaveData(formik)}>
+                                     setLocalStorage
+                                    </button>
+                                 ) : null
+                                }
+                                {
+                                 savedData ? (
+                                    <button type="button" className="btn btn-info me-2" onClick={handleGetSaveData}>
+                                     getLocalStorage
+                                    </button>
+                                 ) : null
+                                }
                             </div>
                        <div>
                  </div>
